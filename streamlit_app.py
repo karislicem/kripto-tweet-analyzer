@@ -26,32 +26,65 @@ st.markdown("""
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: bold;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
     }
     .stAlert {
         margin-top: 1rem;
     }
     .upload-section {
-        border: 2px dashed #ccc;
-        border-radius: 10px;
-        padding: 20px;
+        border: 2px dashed #1f77b4;
+        border-radius: 15px;
+        padding: 30px;
         text-align: center;
         margin: 20px 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
     .results-section {
         background-color: #f8f9fa;
         border-radius: 10px;
         padding: 20px;
         margin: 20px 0;
+        border: 1px solid #dee2e6;
     }
     .info-box {
-        background-color: #e8f4f8;
-        border-left: 4px solid #1f77b4;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #1976d2;
         padding: 15px;
         margin: 10px 0;
-        border-radius: 5px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .json-example {
+        background-color: #2d3748;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        margin: 10px 0;
+        border: 1px solid #4a5568;
+    }
+    .metric-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #dee2e6;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 8px 8px 0 0;
+    }
+    .sidebar-section {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #dee2e6;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -206,20 +239,24 @@ def main():
             st.error("❌ API anahtarı bulunamadı")
         
         # Help section
-        st.subheader("❓ Yardım")
-        st.markdown("""
-        **JSON Format:**
-        ```json
-        [
-          {
-            "username": "kullanici",
-            "text": "tweet metni",
-            "timestamp": "2025-01-16T10:30:00.000Z",
-            "scraped_at": "2025-01-16T10:35:00.000Z"
-          }
-        ]
-        ```
-        """)
+        with st.expander("❓ Yardım", expanded=False):
+            st.markdown("**📋 Desteklenen JSON Formatı:**")
+            st.markdown("""
+            <div class="json-example">
+[<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"username": "kullanici",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"text": "tweet metni",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"timestamp": "2025-01-16T10:30:00.000Z",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"scraped_at": "2025-01-16T10:35:00.000Z"<br>
+&nbsp;&nbsp;}<br>
+]
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown("**⚡ İpuçları:**")
+            st.markdown("• Dosya boyutu maksimum 200MB olmalı")
+            st.markdown("• JSON formatında geçerli bir dizi olmalı")
+            st.markdown("• Her tweet objesi 'text' alanı içermeli")
     
     # Main content
     tab1, tab2, tab3 = st.tabs(["📤 Dosya Yükleme", "📊 Analiz Sonuçları", "📈 İstatistikler"])
@@ -227,11 +264,20 @@ def main():
     with tab1:
         st.header("📁 JSON Dosya Yükleme")
         
+        # Upload section with custom styling
+        st.markdown("""
+        <div class="upload-section">
+            <h3>📤 Dosya Yükleme Alanı</h3>
+            <p>Kripto tweet JSON dosyanızı buraya sürükleyin veya dosya seçin</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
         # File upload
         uploaded_file = st.file_uploader(
-            "Kripto tweet JSON dosyanızı yükleyin",
+            "JSON dosyanızı seçin",
             type=['json'],
-            help="X scraper'ınızdan elde ettiğiniz JSON dosyasını yükleyin"
+            help="X scraper'ınızdan elde ettiğiniz JSON dosyasını yükleyin",
+            label_visibility="collapsed"
         )
         
         if uploaded_file is not None:
@@ -263,7 +309,7 @@ def main():
                     # Configure analyzer
                     analyzer.config.MAX_TWEETS_PER_ANALYSIS = max_tweets
                     analyzer.config.CHUNK_SIZE = chunk_size
-                    analyzer.config.SAVE_RESULTS = False
+                    # Don't save results in streamlit mode
                     
                     # Run analysis
                     with st.spinner("🔄 Analiz yapılıyor... Bu işlem birkaç dakika sürebilir."):
@@ -328,21 +374,30 @@ def main():
             stats = create_tweet_stats(tweets)
             
             if stats:
-                # Basic stats
+                # Basic stats with custom styling
+                st.markdown("### 📊 Temel İstatistikler")
                 col1, col2, col3, col4 = st.columns(4)
                 
                 with col1:
+                    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
                     st.metric("📊 Toplam Tweet", stats['total_tweets'])
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
                 with col2:
+                    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
                     st.metric("👥 Benzersiz Kullanıcı", stats['unique_users'])
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
                 with col3:
+                    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
                     avg_chars = sum(stats['char_counts']) / len(stats['char_counts'])
                     st.metric("📝 Ortalama Karakter", f"{avg_chars:.0f}")
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
                 with col4:
+                    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
                     st.metric("📏 Maksimum Karakter", max(stats['char_counts']))
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
                 # Charts
                 col1, col2 = st.columns(2)

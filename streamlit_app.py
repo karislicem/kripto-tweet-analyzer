@@ -40,6 +40,15 @@ st.markdown("""
         text-align: center;
         margin: 20px 0;
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #495057;
+    }
+    .upload-section h3 {
+        color: #343a40 !important;
+        margin-bottom: 10px;
+    }
+    .upload-section p {
+        color: #6c757d !important;
+        margin-bottom: 0;
     }
     .results-section {
         background-color: #f8f9fa;
@@ -55,16 +64,22 @@ st.markdown("""
         margin: 10px 0;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        color: #1a237e !important;
+    }
+    .info-box strong {
+        color: #0d47a1 !important;
+        font-weight: 600;
     }
     .json-example {
-        background-color: #2d3748;
-        color: #e2e8f0;
+        background-color: #f8f9fa;
+        color: #2d3748;
         padding: 15px;
         border-radius: 8px;
         font-family: 'Courier New', monospace;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         margin: 10px 0;
-        border: 1px solid #4a5568;
+        border: 2px solid #6c757d;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .metric-card {
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
